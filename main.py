@@ -112,7 +112,24 @@ def webhook():
     return {"ok": True}
 
 # === ЗАПУСК ===
+import time
+
+def auto_signal_loop():
+    while True:
+        try:
+            signal = generate_signal()
+            if signal:
+                send_to_telegram(signal)
+                print(f"✅ Сигнал отправлен: {signal[:50]}...")
+            else:
+                print("⛔ Сигнал не найден")
+        except Exception as e:
+            print(f"❌ Ошибка в автоанализе: {e}")
+        time.sleep(120)  # 2 минуты пауза
+
 if __name__ == "__main__":
     Thread(target=update_prices).start()
-    Thread(target=generate_signal).start()
+    Thread(target=auto_signal_loop).start()
     app.run(host="0.0.0.0", port=10000)
+
+
